@@ -64,9 +64,17 @@
 
         // 保存の処理
         document.getElementById('submitBtn').addEventListener('click', async () => {
-            const uName = document.getElementById('userName').value;
-            const rName = document.getElementById('raceName').value;
-            const bContent = document.getElementById('betContent').value;
+            const uName = document.getElementById('member').value; // メンバー名を取得
+const rName = document.getElementById('raceName').value;
+// 5つの入力欄をすべて取得
+const b1 = document.getElementById('bet1').value;
+const b2 = document.getElementById('bet2').value;
+const b3 = document.getElementById('bet3').value;
+const b4 = document.getElementById('bet4').value;
+const b5 = document.getElementById('bet5').value;
+
+// 入力されたものだけを「 / 」でつなげる
+const bContent = [b1, b2, b3, b4, b5].filter(v => v !== "").join(" / ");
             if(!rName || !bContent) return alert("入力してください");
 
             try {
@@ -94,5 +102,6 @@
     </script>
 </body>
 </html>
+
 
 
