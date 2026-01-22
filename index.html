@@ -3,16 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>堺レーシング協会 - 買い目登録</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: sans-serif; background: #e8f5e9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; margin-bottom: 20px; }
-        h1, h2 { color: #2e7d32; margin-top: 0; }
-        label { font-size: 0.9em; color: #666; }
-        input, select, button { margin: 8px 0 16px 0; padding: 12px; width: 100%; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
-        button { background: #2e7d32; color: white; border: none; font-weight: bold; font-size: 1.1em; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #1b5e20; }
+        body { font-family: sans-serif; background: #e8f5e9; padding: 10px; display: flex; flex-direction: column; align-items: center; }
+        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; margin-bottom: 20px; box-sizing: border-box; }
+        h1, h2 { color: #2e7d32; margin-top: 0; font-size: 1.5em; }
+        label { font-size: 0.85em; color: #666; font-weight: bold; }
+        input, select, button { margin: 5px 0 10px 0; padding: 10px; width: 100%; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
+        button#submitBtn { background: #2e7d32; color: white; border: none; font-weight: bold; font-size: 1.2em; cursor: pointer; margin-top: 10px; }
+        
+        /* 数字ボタン（テンキー）のスタイル */
+        .num-pad { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-bottom: 15px; background: #f1f8e9; padding: 8px; border-radius: 8px; }
+        .num-pad button { margin: 0; padding: 8px 0; background: white; font-size: 0.9em; color: #333; border: 1px solid #c8e6c9; }
+        .num-pad button:active { background: #c8e6c9; }
+        .num-pad button.clear-btn { background: #ffecb3; grid-column: span 2; }
+
+        .bet-row { display: flex; gap: 5px; margin-bottom: 5px; }
         .bet-item { border-bottom: 1px solid #eee; padding: 12px 0; }
-        .bet-item:last-child { border-bottom: none; }
         .user-name { font-weight: bold; color: #333; }
         .bet-content { color: #d32f2f; font-weight: bold; margin-left: 10px; }
     </style>
@@ -22,36 +29,33 @@
     <div class="card">
         <h1>🏇 買い目登録</h1>
         <label>メンバー</label>
-        <select id="member" required>
+        <select id="member">
             <option value="今内">今内</option>
             <option value="小林">小林</option>
             <option value="坂井">坂井</option>
             <option value="橋本">橋本</option>
             <option value="山村">山村</option>
         </select>
+
         <label>レース名</label>
         <input type="text" id="raceName" placeholder="例：中山11R 有馬記念">
         
-        <label>買い目（券種と番号）</label>
-        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
-            <select id="type1" style="width: 35%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
-            <input type="text" id="bet1" placeholder="買い目 1" style="width: 65%; margin: 0;" required>
-        </div>
-        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
-            <select id="type2" style="width: 35%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
-            <input type="text" id="bet2" placeholder="買い目 2" style="width: 65%; margin: 0;">
-        </div>
-        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
-            <select id="type3" style="width: 35%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
-            <input type="text" id="bet3" placeholder="買い目 3" style="width: 65%; margin: 0;">
-        </div>
-        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
-            <select id="type4" style="width: 35%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
-            <input type="text" id="bet4" placeholder="買い目 4" style="width: 65%; margin: 0;">
-        </div>
-        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
-            <select id="type5" style="width: 35%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
-            <input type="text" id="bet5" placeholder="買い目 5" style="width: 65%; margin: 0;">
+        <label>買い目（数字ボタンで入力）</label>
+        <div id="bet-containers">
+            <script>
+                for(let i=1; i<=5; i++){
+                    document.write(`
+                        <div class="bet-row">
+                            <select id="type${i}" style="width: 35%;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
+                            <input type="text" id="bet${i}" placeholder="買い目 ${i}" style="width: 65%;" readonly>
+                        </div>
+                        <div class="num-pad">
+                            ${[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18].map(n => `<button type="button" onclick="addNum(${i}, ${n})">${n}</button>`).join('')}
+                            <button type="button" class="clear-btn" onclick="clearNum(${i})">消去</button>
+                        </div>
+                    `);
+                }
+            </script>
         </div>
         
         <button id="submitBtn">登録する！</button>
@@ -78,6 +82,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // 数字入力の補助関数をグローバルに
+        window.addNum = (row, num) => {
+            const el = document.getElementById(`bet${row}`);
+            if (el.value === "") { el.value = num; } 
+            else { el.value += "-" + num; }
+        };
+        window.clearNum = (row) => {
+            document.getElementById(`bet${row}`).value = "";
+        };
+
         // 保存の処理
         document.getElementById('submitBtn').addEventListener('click', async () => {
             const uName = document.getElementById('member').value;
@@ -99,6 +113,7 @@
                 });
                 document.getElementById('raceName').value = "";
                 for (let i = 1; i <= 5; i++) { document.getElementById(`bet${i}`).value = ""; }
+                alert("登録しました！");
             } catch (e) { alert("エラーが発生しました。"); }
         });
 
@@ -107,27 +122,17 @@
         onSnapshot(q, (snapshot) => {
             const betList = document.getElementById('betList');
             betList.innerHTML = "";
-            
             if (snapshot.empty) {
                 betList.innerHTML = "まだ投稿がありません。";
                 return;
             }
-
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                // データの欠落対策
-                const name = data.name || "不明";
-                const race = data.race || "不明なレース";
-                const bet = data.bet || "データなし";
-                
                 const div = document.createElement('div');
                 div.className = 'bet-item';
-                div.innerHTML = `<span class="user-name">🏇 ${name}</span> <small>${race}</small><br><span class="bet-content">${bet}</span>`;
+                div.innerHTML = `<span class="user-name">🏇 ${data.name || '不明'}</span> <small>${data.race || ''}</small><br><span class="bet-content">${data.bet || ''}</span>`;
                 betList.appendChild(div);
             });
-        }, (error) => {
-            console.error("Firebase Error:", error);
-            document.getElementById('betList').innerHTML = "データの取得に失敗しました。設定を確認してください。";
         });
     </script>
 </body>
