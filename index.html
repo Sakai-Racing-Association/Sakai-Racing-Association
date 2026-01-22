@@ -31,13 +31,19 @@
 </select>
         <label>レース名</label>
         <input type="text" id="raceName" placeholder="例：中山11R 有馬記念">
-<label>買い目</label>
-<input type="text" id="bet1" placeholder="買い目 1" required>
-<input type="text" id="bet2" placeholder="買い目 2">
-<input type="text" id="bet3" placeholder="買い目 3">
-<input type="text" id="bet4" placeholder="買い目 4">
-<input type="text" id="bet5" placeholder="買い目 5">
-        <button id="submitBtn">登録する！</button>
+<label>買い目（券種と番号）</label>
+<div style="display: flex; gap: 5px; margin-bottom: 5px;">
+    <select id="type1" style="width: 30%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
+    <input type="text" id="bet1" placeholder="例：1-2-3" style="width: 70%; margin: 0;" required>
+</div>
+<div style="display: flex; gap: 5px; margin-bottom: 5px;">
+    <select id="type2" style="width: 30%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
+    <input type="text" id="bet2" placeholder="例：4-5" style="width: 70%; margin: 0;">
+</div>
+<div style="display: flex; gap: 5px; margin-bottom: 5px;">
+    <select id="type3" style="width: 30%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
+    <input type="text" id="bet3" placeholder="例：7" style="width: 70%; margin: 0;">
+</div>        <button id="submitBtn">登録する！</button>
     </div>
 
     <div class="card">
@@ -67,14 +73,21 @@
             const uName = document.getElementById('member').value; // メンバー名を取得
 const rName = document.getElementById('raceName').value;
 // 5つの入力欄をすべて取得
+// 券種と番号をセットで取得する
+const t1 = document.getElementById('type1').value;
 const b1 = document.getElementById('bet1').value;
+const t2 = document.getElementById('type2').value;
 const b2 = document.getElementById('bet2').value;
+const t3 = document.getElementById('type3').value;
 const b3 = document.getElementById('bet3').value;
-const b4 = document.getElementById('bet4').value;
-const b5 = document.getElementById('bet5').value;
 
-// 入力されたものだけを「 / 」でつなげる
-const bContent = [b1, b2, b3, b4, b5].filter(v => v !== "").join(" / ");
+// 「単勝 1-2」のような形式にして、入力があるものだけ合体させる
+const bets = [];
+if(b1) bets.push(`${t1} ${b1}`);
+if(b2) bets.push(`${t2} ${b2}`);
+if(b3) bets.push(`${t3} ${b3}`);
+
+const bContent = bets.join(" / ");
             if(!rName || !bContent) return alert("入力してください");
 
 try {
@@ -107,6 +120,7 @@ try {
     </script>
 </body>
 </html>
+
 
 
 
