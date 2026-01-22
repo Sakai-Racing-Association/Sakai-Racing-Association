@@ -77,12 +77,17 @@ const b5 = document.getElementById('bet5').value;
 const bContent = [b1, b2, b3, b4, b5].filter(v => v !== "").join(" / ");
             if(!rName || !bContent) return alert("入力してください");
 
-            try {
+try {
                 await addDoc(collection(db, "bets"), {
                     name: uName, race: rName, bet: bContent, createdAt: serverTimestamp()
                 });
+                // ここから下が入力欄を空にする命令です
                 document.getElementById('raceName').value = "";
-                document.getElementById('betContent').value = "";
+                document.getElementById('bet1').value = "";
+                document.getElementById('bet2').value = "";
+                document.getElementById('bet3').value = "";
+                document.getElementById('bet4').value = "";
+                document.getElementById('bet5').value = "";
             } catch (e) { alert("エラー！"); }
         });
 
@@ -102,6 +107,7 @@ const bContent = [b1, b2, b3, b4, b5].filter(v => v !== "").join(" / ");
     </script>
 </body>
 </html>
+
 
 
 
