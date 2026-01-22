@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>俺たちの競馬予想</title>
+    <title>堺レーシング協会 - 買い目登録</title>
     <style>
         body { font-family: sans-serif; background: #e8f5e9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; margin-bottom: 20px; }
@@ -21,29 +21,32 @@
 
     <div class="card">
         <h1>🏇 買い目登録</h1>
-<label>メンバー</label>
-<select id="member" required>
-    <option value="今内">今内</option>
-    <option value="小林">小林</option>
-    <option value="坂井">坂井</option>
-    <option value="橋本">橋本</option>
-    <option value="山村">山村</option>
-</select>
+        <label>メンバー</label>
+        <select id="member" required>
+            <option value="今内">今内</option>
+            <option value="小林">小林</option>
+            <option value="坂井">坂井</option>
+            <option value="橋本">橋本</option>
+            <option value="山村">山村</option>
+        </select>
         <label>レース名</label>
         <input type="text" id="raceName" placeholder="例：中山11R 有馬記念">
-<label>買い目（券種と番号）</label>
-<div style="display: flex; gap: 5px; margin-bottom: 5px;">
-    <select id="type1" style="width: 30%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
-    <input type="text" id="bet1" placeholder="例：1-2-3" style="width: 70%; margin: 0;" required>
-</div>
-<div style="display: flex; gap: 5px; margin-bottom: 5px;">
-    <select id="type2" style="width: 30%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
-    <input type="text" id="bet2" placeholder="例：4-5" style="width: 70%; margin: 0;">
-</div>
-<div style="display: flex; gap: 5px; margin-bottom: 5px;">
-    <select id="type3" style="width: 30%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
-    <input type="text" id="bet3" placeholder="例：7" style="width: 70%; margin: 0;">
-</div>        <button id="submitBtn">登録する！</button>
+        
+        <label>買い目（券種と番号）</label>
+        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+            <select id="type1" style="width: 35%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
+            <input type="text" id="bet1" placeholder="例：1-2-3" style="width: 65%; margin: 0;" required>
+        </div>
+        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+            <select id="type2" style="width: 35%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
+            <input type="text" id="bet2" placeholder="例：4-5" style="width: 65%; margin: 0;">
+        </div>
+        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+            <select id="type3" style="width: 35%; margin: 0;"><option>単勝</option><option>複勝</option><option>馬連</option><option>ワイド</option><option>馬単</option><option>3連複</option><option>3連単</option></select>
+            <input type="text" id="bet3" placeholder="例：7" style="width: 65%; margin: 0;">
+        </div>
+        
+        <button id="submitBtn">登録する！</button>
     </div>
 
     <div class="card">
@@ -55,53 +58,52 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // ★ここにあなたのFirebase設定を貼り付けてください★
-        const firebaseConfig =  {
-  apiKey: "AIzaSyAZRvZcA5ARtd0E5tvdn5Z9rOuUCRfw9ww",
-  authDomain: "sakai-racing-association.firebaseapp.com",
-  projectId: "sakai-racing-association",
-  storageBucket: "sakai-racing-association.firebasestorage.app",
-  messagingSenderId: "596238260555",
-  appId: "1:596238260555:web:df79f88e8c81e6573930ce",
-  measurementId: "G-JRJCYSYENL"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyAZRvZcA5ARtd0E5tvdn5Z9rOuUCRfw9ww",
+            authDomain: "sakai-racing-association.firebaseapp.com",
+            projectId: "sakai-racing-association",
+            storageBucket: "sakai-racing-association.firebasestorage.app",
+            messagingSenderId: "596238260555",
+            appId: "1:596238260555:web:df79f88e8c81e6573930ce",
+            measurementId: "G-JRJCYSYENL"
+        };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         // 保存の処理
         document.getElementById('submitBtn').addEventListener('click', async () => {
-            const uName = document.getElementById('member').value; // メンバー名を取得
-const rName = document.getElementById('raceName').value;
-// 5つの入力欄をすべて取得
-// 券種と番号をセットで取得する
-const t1 = document.getElementById('type1').value;
-const b1 = document.getElementById('bet1').value;
-const t2 = document.getElementById('type2').value;
-const b2 = document.getElementById('bet2').value;
-const t3 = document.getElementById('type3').value;
-const b3 = document.getElementById('bet3').value;
+            const uName = document.getElementById('member').value;
+            const rName = document.getElementById('raceName').value;
+            
+            const t1 = document.getElementById('type1').value;
+            const b1 = document.getElementById('bet1').value;
+            const t2 = document.getElementById('type2').value;
+            const b2 = document.getElementById('bet2').value;
+            const t3 = document.getElementById('type3').value;
+            const b3 = document.getElementById('bet3').value;
 
-// 「単勝 1-2」のような形式にして、入力があるものだけ合体させる
-const bets = [];
-if(b1) bets.push(`${t1} ${b1}`);
-if(b2) bets.push(`${t2} ${b2}`);
-if(b3) bets.push(`${t3} ${b3}`);
+            const bets = [];
+            if(b1) bets.push(`${t1} ${b1}`);
+            if(b2) bets.push(`${t2} ${b2}`);
+            if(b3) bets.push(`${t3} ${b3}`);
 
-const bContent = bets.join(" / ");
-            if(!rName || !bContent) return alert("入力してください");
+            const bContent = bets.join(" / ");
 
-try {
+            if(!rName || !bContent) return alert("レース名と買い目1は入力してください");
+
+            try {
                 await addDoc(collection(db, "bets"), {
                     name: uName, race: rName, bet: bContent, createdAt: serverTimestamp()
                 });
-                // ここから下が入力欄を空にする命令です
+                // 入力欄をリセット（存在するIDのみ）
                 document.getElementById('raceName').value = "";
                 document.getElementById('bet1').value = "";
                 document.getElementById('bet2').value = "";
                 document.getElementById('bet3').value = "";
-                document.getElementById('bet4').value = "";
-                document.getElementById('bet5').value = "";
-            } catch (e) { alert("エラー！"); }
+            } catch (e) { 
+                console.error(e);
+                alert("エラーが発生しました。"); 
+            }
         });
 
         // リアルタイム表示の処理
@@ -113,15 +115,10 @@ try {
                 const data = doc.data();
                 const div = document.createElement('div');
                 div.className = 'bet-item';
-                div.innerHTML = `<span class="user-name">${data.name}</span> <small>${data.race}</small><br><span class="bet-content">${data.bet}</span>`;
+                div.innerHTML = `<span class="user-name">🏇 ${data.name}</span> <small>${data.race}</small><br><span class="bet-content">${data.bet}</span>`;
                 betList.appendChild(div);
             });
         });
     </script>
 </body>
 </html>
-
-
-
-
-
