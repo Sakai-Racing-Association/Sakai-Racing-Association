@@ -83,10 +83,52 @@
             const uName = document.getElementById('member').value;
             const rName = document.getElementById('raceName').value;
             
-            // 5つの券種と番号を取得
-            const t = [1, 2, 3, 4, 5].map(i => document.getElementById(`type${i}`).value);
-            const b = [1, 2, 3, 4, 5].map(i => document.getElementById(`bet${i}`).value);
-
             const bets = [];
-            for (let i = 0; i < 5; i++) {
-                if (b[i]) bets.push(`${t
+            for (let i = 1; i <= 5; i++) {
+                const type = document.getElementById(`type${i}`).value;
+                const val = document.getElementById(`bet${i}`).value;
+                if (val) bets.push(`${type} ${val}`);
+            }
+            const bContent = bets.join(" / ");
+
+            if(!rName || !bContent) return alert("レース名と買い目1は入力してください");
+
+            try {
+                await addDoc(collection(db, "bets"), {
+                    name: uName, race: rName, bet: bContent, createdAt: serverTimestamp()
+                });
+                document.getElementById('raceName').value = "";
+                for (let i = 1; i <= 5; i++) { document.getElementById(`bet${i}`).value = ""; }
+            } catch (e) { alert("エラーが発生しました。"); }
+        });
+
+        // リアルタイム表示の処理
+        const q = query(collection(db, "bets"), orderBy("createdAt", "desc"));
+        onSnapshot(q, (snapshot) => {
+            const betList = document.getElementById('betList');
+            betList.innerHTML = "";
+            
+            if (snapshot.empty) {
+                betList.innerHTML = "まだ投稿がありません。";
+                return;
+            }
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                // データの欠落対策
+                const name = data.name || "不明";
+                const race = data.race || "不明なレース";
+                const bet = data.bet || "データなし";
+                
+                const div = document.createElement('div');
+                div.className = 'bet-item';
+                div.innerHTML = `<span class="user-name">🏇 ${name}</span> <small>${race}</small><br><span class="bet-content">${bet}</span>`;
+                betList.appendChild(div);
+            });
+        }, (error) => {
+            console.error("Firebase Error:", error);
+            document.getElementById('betList').innerHTML = "データの取得に失敗しました。設定を確認してください。";
+        });
+    </script>
+</body>
+</html>
